@@ -5,7 +5,7 @@
 
 ## Part 1:
 
-LINK TO YOUR PUBLISHED SITE
+[part 1 site](https://sjramirez.github.io/Lab5/)
 
 ## Part 2:
 
