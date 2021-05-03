@@ -17,8 +17,13 @@ const img = new Image(); // used to load image from <input> and draw to canvas
   let voices = document.querySelector("#voice-selection");
 
 
-  let voiceOptions = speechSynthesis.getVoices();
- 
+  let synth = window.speechSynthesis;
+  let voiceOptions = synth.getVoices();
+
+  synth.addEventListener('voiceschanged', () => {
+    voiceOptions = synth.getVoices();
+  });
+
 
   let imgInput = document.querySelector("#image-input");
 
@@ -31,6 +36,30 @@ const img = new Image(); // used to load image from <input> and draw to canvas
 
   });
 
+readText.addEventListener('click', () => {
+  console.log(voices);
+  let upper = new SpeechSynthesisUtterance();
+  upper.text = topText.value;
+  upper.volume = volume.value*.01;
+  let voice = voiceOptions[1];
+  for(let i = 0; i < voiceOptions.length; i++)
+  {
+    if(voiceOptions[i].name == voices.value)
+    {
+      voice = voiceOptions[i];
+      break;
+    }
+  }
+
+  upper.voice = voice;
+  let bottom = new SpeechSynthesisUtterance();
+  bottom.text = botText.value;
+  bottom.volume = volume.value *.01;
+  bottom.voice = voice;
+  synth.speak(upper);
+  synth.speak(bottom);
+});
+  
 
 clear.addEventListener('click', () => 
 {
@@ -48,17 +77,25 @@ form.addEventListener('submit', () => {
   clear.disabled = false;
   readText.disabled = false;
   voiceSelection.disabled = false;
-  setTimeout(()=>{console.log(voiceOptions);},3000);
   
   ctx.font= "50px sans-serif";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
-  ctx.fillText(topText.value,canvas.width/2,50);
-  ctx.fillText(botText.value,canvas.width/2, canvas.height - 10);
+  ctx.fillText(topText.value.toUpperCase(),canvas.width/2,50);
+  ctx.fillText(botText.value.toUpperCase(),canvas.width/2, canvas.height - 10);
 
   ctx.strokeStyle = "black";
-  ctx.strokeText(topText.value,canvas.width/2,50);
-  ctx.strokeText(botText.value,canvas.width/2, canvas.height - 10);
+  ctx.strokeText(topText.value.toUpperCase(),canvas.width/2,50);
+  ctx.strokeText(botText.value.toUpperCase(),canvas.width/2, canvas.height - 10);
+
+  for(let i = 0; i < voiceOptions.length; i++)
+  {
+    let option = document.createElement('option');
+    option.textContent = voiceOptions[i].name ;
+    option.setAttribute('data-lang', voiceOptions[i].lang);
+    option.setAttribute('data-name', voiceOptions[i].name);
+    voices.appendChild(option);
+  }
 });
 
 
