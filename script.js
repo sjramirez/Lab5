@@ -2,14 +2,107 @@
 
 const img = new Image(); // used to load image from <input> and draw to canvas
 
+  const canvas = document.getElementById("user-image");
+  const ctx = canvas.getContext("2d");
+  let submit = document.querySelector("button[type = 'submit']");
+
+  let clear = document.querySelector("button[type='reset']");
+  let readText = document.querySelector("button[type ='button'");
+  let voiceSelection = document.querySelector("#voice-selection");
+  let form = document.querySelector("#generate-meme");
+  let topText = document.querySelector("#text-top");
+  let botText = document.querySelector("#text-bottom");
+  let volume = document.querySelector("input[type='range']");
+  let icon = document.querySelector("#volume-group > img");
+  let voices = document.querySelector("#voice-selection");
+
+
+  let voiceOptions = speechSynthesis.getVoices();
+ 
+
+  let imgInput = document.querySelector("#image-input");
+
+  imgInput.addEventListener('change', () => {
+    console.log(imgInput.files);
+    let url = URL.createObjectURL(imgInput.files[0]);
+    console.log(url);
+    img.src = url;
+    img.alt = imgInput.files[0].name;
+
+  });
+
+
+clear.addEventListener('click', () => 
+{
+  readText.disabled = true;
+  voiceSelection.disabled = true;
+  clear.disabled = true;
+
+  imgInput.value = '';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+});
+
+form.addEventListener('submit', () => {
+ 
+  event.preventDefault();
+  clear.disabled = false;
+  readText.disabled = false;
+  voiceSelection.disabled = false;
+  setTimeout(()=>{console.log(voiceOptions);},3000);
+  
+  ctx.font= "50px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "white";
+  ctx.fillText(topText.value,canvas.width/2,50);
+  ctx.fillText(botText.value,canvas.width/2, canvas.height - 10);
+
+  ctx.strokeStyle = "black";
+  ctx.strokeText(topText.value,canvas.width/2,50);
+  ctx.strokeText(botText.value,canvas.width/2, canvas.height - 10);
+});
+
+
+
+
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-  // TODO
+ console.log("did it");
+ 
 
+ ctx.rect(0,0,400,400);
+ ctx.fillStyle = "black";
+ ctx.fill();
+
+ let positionValues = getDimmensions(canvas.width, canvas.height, img.width, img.height);
+ ctx.drawImage(img, positionValues.startX, positionValues.startY,positionValues.width, positionValues.height);
   // Some helpful tips:
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
+});
+
+
+volume.addEventListener('change', () => {
+    if(volume.value >= 67)
+    {
+      icon.src = "icons/volume-level-3.svg";
+      icon.alt = "Volume level 3";
+    }
+    else if(volume.value >= 34)
+    {
+      icon.src = "icons/volume-level-2.svg";
+      icon.alt = "Volume level 2";
+    }
+    else if(volume.value >= 1)
+    {
+      icon.src = "icons/volume-level-1.svg";
+      icon.alt = "Volume level 1";
+    }
+    else
+    {
+      icon.src = "icons/volume-level-0.svg";
+      icon.alt = "Volume level 0";
+    }
 });
 
 /**
